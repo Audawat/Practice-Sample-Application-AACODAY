@@ -1,8 +1,10 @@
 package com.nice.avishkar.entities;
 
 import com.univocity.parsers.annotations.Parsed;
+import lombok.Data;
 
-public class Votes {
+@Data
+public class Votes<T> {
 
     @Parsed(field = "Voter")
     String name;

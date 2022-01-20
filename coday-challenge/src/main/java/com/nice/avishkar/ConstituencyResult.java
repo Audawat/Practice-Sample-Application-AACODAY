@@ -1,6 +1,7 @@
 package com.nice.avishkar;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ConstituencyResult {
 
@@ -31,6 +32,15 @@ public class ConstituencyResult {
 
 	public void setCandidateList(List<CandidateVotes> candidateList) {
 		this.candidateList = candidateList;
+	}
+
+
+	public void updateResult(String candidateName, int vote) {
+		Optional<CandidateVotes> first = this.candidateList.stream().filter(p -> p.getCandidateName().equals(candidateName)).findFirst();
+		if (first.isPresent()) {
+			CandidateVotes candidateVotes = first.get();
+			candidateVotes.updateVote(vote);
+		}
 	}
 
 	@Override

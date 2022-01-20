@@ -1,74 +1,40 @@
 package com.nice.avishkar;
 
-import com.nice.avishkar.entities.CandidateConstituency;
-import com.nice.avishkar.entities.Votes;
-import com.univocity.parsers.common.processor.BatchedColumnProcessor;
-import com.univocity.parsers.common.processor.BeanListProcessor;
-import com.univocity.parsers.csv.CsvParser;
-import com.univocity.parsers.csv.CsvParserSettings;
+import com.nice.avishkar.dao.CandidatesDao;
+import com.nice.avishkar.dao.CandidatesDaoImpl;
+import com.nice.avishkar.dao.VotersDao;
+import com.nice.avishkar.dao.VotersDaoImpl;
+import com.nice.avishkar.service.CandidateService;
+import com.nice.avishkar.service.VoteCountingService;
 
-import java.io.*;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Solution {
 
 	public ElectionResult execute(Path candidateFile, Path votingFile) {
 		ElectionResult resultData = new ElectionResult();
-
+		Map<String, ConstituencyResult> data = new HashMap<>();
 		// Write code here to read CSV files and process them
-		// Read Candidate File
-		List<CandidateConstituency> parsedCandidates = readCsv(candidateFile);
-		List<Votes> votes = readVotesCsv(votingFile);
+		CandidatesDao candidatesDao = new CandidatesDaoImpl();
+		VotersDao votersDao = new VotersDaoImpl();
+		CandidateService candidateService = new CandidateService(candidatesDao);
+		Map<String, ConstituencyResult> constituencyToCandidateMap = candidateService.getConstituencyToCandidateMap(candidateFile);
 
+		VoteCountingService voteCountingService = new VoteCountingService(votersDao);
+		Map<String, ConstituencyResult> result = voteCountingService.getResult(votingFile, constituencyToCandidateMap);
+
+		// Read Candidate File
+		/*List<CandidateConstituency> parsedCandidates = readCsv(candidateFile);
+		BeanListProcessor<CandidateConstituency> rowProcessor = new BeanListProcessor<CandidateConstituency>(CandidateConstituency.class);
+		List<CandidateConstituency> votes2 = readVotesCsv(candidateFile, rowProcessor);
+
+		BeanListProcessor<Votes> rowProcessor2 = new BeanListProcessor<Votes>(Votes.class);
+		List<Votes> votes = readVotesCsv(votingFile, rowProcessor2);
+*/
 		// Read Vote file
 
 		return resultData;
 	}
-
-
-	public List<CandidateConstituency> readCsv(Path filePath) {
-		List<CandidateConstituency> parsedRows = null;
-		try (Reader inputReader = new InputStreamReader(new FileInputStream(filePath.toFile()), "UTF-8")) {
-			CsvParserSettings settings = new CsvParserSettings();
-			settings.setProcessor(new BatchedColumnProcessor(5) {
-				@Override
-				public void batchProcessed(int rowsInThisBatch) {}
-			});
-			BeanListProcessor<CandidateConstituency> rowProcessor = new BeanListProcessor<CandidateConstituency>(CandidateConstituency.class);
-			settings.setLineSeparatorDetectionEnabled(true);
-			settings.setHeaderExtractionEnabled(true);
-			settings.setRowProcessor(rowProcessor);
-			CsvParser parser = new CsvParser(settings);
-			parser.parseAll(inputReader);
-			parsedRows = rowProcessor.getBeans();
-
-		} catch (IOException e) {
-			// handle exception
-		}
-		return parsedRows;
-	}
-
-	public List<Votes> readVotesCsv(Path filePath) {
-		List<Votes> parsedRows = null;
-		try (Reader inputReader = new InputStreamReader(new FileInputStream(filePath.toFile()), "UTF-8")) {
-			CsvParserSettings settings = new CsvParserSettings();
-			settings.setProcessor(new BatchedColumnProcessor(5) {
-				@Override
-				public void batchProcessed(int rowsInThisBatch) {}
-			});
-			BeanListProcessor<Votes> rowProcessor = new BeanListProcessor<Votes>(Votes.class);
-			settings.setLineSeparatorDetectionEnabled(true);
-			settings.setHeaderExtractionEnabled(true);
-			settings.setRowProcessor(rowProcessor);
-			CsvParser parser = new CsvParser(settings);
-			parser.parseAll(inputReader);
-			parsedRows = rowProcessor.getBeans();
-
-		} catch (IOException e) {
-			// handle exception
-		}
-		return parsedRows;
-	}
-
 }

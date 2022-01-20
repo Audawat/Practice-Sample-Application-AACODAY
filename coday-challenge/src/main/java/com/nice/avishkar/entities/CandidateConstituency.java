@@ -1,9 +1,10 @@
 package com.nice.avishkar.entities;
 
 import com.univocity.parsers.annotations.Parsed;
+import lombok.Data;
 
-public class CandidateConstituency {
-
+@Data
+public class CandidateConstituency<T> {
     @Parsed(field = "Constituency")
     String Constituency;
     @Parsed(field = "Candidate")
