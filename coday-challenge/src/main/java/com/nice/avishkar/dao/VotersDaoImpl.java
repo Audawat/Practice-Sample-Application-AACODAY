@@ -9,8 +9,8 @@ import java.util.List;
 public class VotersDaoImpl implements VotersDao {
 
     @Override
-    public List<Votes> getAllVoter(Path path) {
+    public List<String[]> getAllVoter(Path path) {
         BeanListProcessor<Votes> rowProcessor = new BeanListProcessor<Votes>(Votes.class);
-        return DaoUtils.readVotesCsv(path, rowProcessor);
+        return DaoUtils.readVotesCsv(path);
     }
 }

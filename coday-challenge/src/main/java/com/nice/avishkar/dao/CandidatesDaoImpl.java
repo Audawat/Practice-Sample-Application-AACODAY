@@ -9,8 +9,8 @@ import java.util.List;
 public class CandidatesDaoImpl implements CandidatesDao {
 
     @Override
-    public List<CandidateConstituency> getAllCandidate(Path path) {
+    public List<String[]> getAllCandidate(Path path) {
         BeanListProcessor<CandidateConstituency> rowProcessor = new BeanListProcessor<CandidateConstituency>(CandidateConstituency.class);
-        return DaoUtils.readVotesCsv(path, rowProcessor);
+        return DaoUtils.readVotesCsv(path);
     }
 }

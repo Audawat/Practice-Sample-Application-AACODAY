@@ -6,5 +6,5 @@ import java.nio.file.Path;
 import java.util.List;
 
 public interface VotersDao {
-    List<Votes> getAllVoter(Path path);
+    List<String[]> getAllVoter(Path path);
 }

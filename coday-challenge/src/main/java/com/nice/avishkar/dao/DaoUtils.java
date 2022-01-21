@@ -37,5 +37,27 @@ public class DaoUtils {
         }
         return parsedRows;
     }
+
+    public static List<String[]> readVotesCsv(Path filePath) {
+        List<String[]> parsedRows = null;
+        try (Reader inputReader = new InputStreamReader(new FileInputStream(filePath.toFile()), Constants.UTF_8)) {
+            CsvParserSettings settings = new CsvParserSettings();
+            settings.setProcessor(new BatchedColumnProcessor(1000) {
+                @Override
+                public void batchProcessed(int rowsInThisBatch) {}
+            });
+            //Settings to read CSVs
+            settings.setLineSeparatorDetectionEnabled(true);
+            settings.setHeaderExtractionEnabled(true);
+            settings.setSkipEmptyLines(true);
+            CsvParser parser = new CsvParser(settings);
+            parsedRows = parser.parseAll(inputReader);
+
+        } catch (IOException e) {
+            System.out.println("Exception Occurred During Processing CSV File with Message: "+ e.getMessage());
+            e.printStackTrace();
+        }
+        return parsedRows;
+    }
 }
 

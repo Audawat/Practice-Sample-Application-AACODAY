@@ -6,5 +6,5 @@ import java.nio.file.Path;
 import java.util.List;
 
 public interface CandidatesDao {
-    List<CandidateConstituency> getAllCandidate(Path path);
+    List<String[]> getAllCandidate(Path path);
 }

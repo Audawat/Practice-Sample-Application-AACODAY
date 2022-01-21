@@ -3,13 +3,9 @@ package com.nice.avishkar.service;
 import com.nice.avishkar.CandidateVotes;
 import com.nice.avishkar.ConstituencyResult;
 import com.nice.avishkar.dao.CandidatesDao;
-import com.nice.avishkar.entities.CandidateConstituency;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.nice.avishkar.Constants.NOTA;
 
@@ -23,26 +19,30 @@ public class CandidateServiceImpl implements CandidateService {
     @Override
     public Map<String, ConstituencyResult> getConstituencyToCandidateMap(Path path) {
         Map<String, ConstituencyResult> data = new HashMap<>();
-        List<CandidateConstituency> allCandidate = candidatesDao.getAllCandidate(path);
+        List<String[]> allCandidate = candidatesDao.getAllCandidate(path);
 
-        allCandidate.stream().forEach(p -> {
-            if (data.containsKey(p.getConstituency())) {
-                ConstituencyResult constituencyResult = data.get(p.getConstituency());
-                constituencyResult.getCandidateList().add(new CandidateVotes(p.getCandidate(), 0L));
-            } else {
-                ConstituencyResult constituencyResult = new ConstituencyResult();
-                List<CandidateVotes> candidateList = new ArrayList<>();
-                CandidateVotes nota = new CandidateVotes(NOTA, 0L);
-                CandidateVotes candidate = new CandidateVotes(p.getCandidate(), 0L);
-                candidateList.add(nota);
-                candidateList.add(candidate);
+        if (null != allCandidate) {
+            allCandidate.parallelStream().forEachOrdered(p -> {
+                if (data.containsKey(p[0])) {
+                    ConstituencyResult constituencyResult = data.get(p[0]);
+                    constituencyResult.getCandidateList().add(new CandidateVotes(p[1], 0L));
+                } else {
+                    ConstituencyResult constituencyResult = new ConstituencyResult();
+                    List<CandidateVotes> candidateList = new ArrayList<>();
+                    CandidateVotes nota = new CandidateVotes(NOTA, 0L);
+                    CandidateVotes candidate = new CandidateVotes(p[1], 0L);
+                    candidateList.add(nota);
+                    candidateList.add(candidate);
 
-                constituencyResult.setWinnerName(null);
-                constituencyResult.setCandidateList(candidateList);
+                    constituencyResult.setWinnerName(null);
+                    constituencyResult.setCandidateList(candidateList);
 
-                data.put(p.getConstituency(), constituencyResult);
-            }
-        });
+                    data.put(p[0], constituencyResult);
+                }
+            });
+        } else {
+            System.out.println("No Constituency to candidate data");
+        }
         return data;
     }
 }
