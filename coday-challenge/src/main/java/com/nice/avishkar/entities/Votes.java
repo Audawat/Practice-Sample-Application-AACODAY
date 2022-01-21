@@ -3,15 +3,17 @@ package com.nice.avishkar.entities;
 import com.univocity.parsers.annotations.Parsed;
 import lombok.Data;
 
+import static com.nice.avishkar.Constants.*;
+
 @Data
 public class Votes<T> {
 
-    @Parsed(field = "Voter")
+    @Parsed(field = VOTER)
     String name;
-    @Parsed(field = "Constituency")
+    @Parsed(field = CONSTITUENCY)
     String constituency;
-    @Parsed(field = "PollingStation")
+    @Parsed(field = POLLING_STATION)
     String pollingStation;
-    @Parsed(field = "Candidate")
+    @Parsed(field = CANDIDATE)
     String candidate;
 }

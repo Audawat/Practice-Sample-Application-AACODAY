@@ -2,7 +2,7 @@ package com.nice.avishkar;
 
 import java.util.Objects;
 
-public class CandidateVotes {
+public class CandidateVotes{
 
 	private String  candidateName;
 	private long votes;
@@ -64,8 +64,4 @@ public class CandidateVotes {
 		builder.append("]");
 		return builder.toString();
 	}
-
-
-
-
 }
