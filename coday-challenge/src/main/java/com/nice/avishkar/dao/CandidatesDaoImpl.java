@@ -1,16 +1,13 @@
 package com.nice.avishkar.dao;
 
-import com.nice.avishkar.entities.CandidateConstituency;
-import com.univocity.parsers.common.processor.BeanListProcessor;
-
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
 public class CandidatesDaoImpl implements CandidatesDao {
 
     @Override
-    public List<String[]> getAllCandidate(Path path) {
-        BeanListProcessor<CandidateConstituency> rowProcessor = new BeanListProcessor<CandidateConstituency>(CandidateConstituency.class);
+    public List<String[]> getAllCandidate(Path path) throws IOException {
         return DaoUtils.readVotesCsv(path);
     }
 }
