@@ -26,14 +26,10 @@ public class VoteCountingServiceImpl implements VoteCountingService {
 
         if (null != constituencyToCandidateMap) {
             Map<String, CastedVote> castedVotes = new HashMap<>();
-            // Getting all data from dataset
-            Instant start = Instant.now();
+            // Getting voting data from dataset
             List<String[]> allVoter = votersDao.getAllVoter(path);
-            Instant finish = Instant.now();
-            long timeElapsed = Duration.between(start, finish).toMillis();
-            System.err.println("getAllVoter Execution took "+ timeElapsed + " millis");
 
-            start = Instant.now();
+            //Process and count votes per candidate basis
             allVoter.parallelStream().forEachOrdered(v -> {
                     try {
                         if (isValidVote(v[0], castedVotes, constituencyToCandidateMap)) {
@@ -51,25 +47,17 @@ public class VoteCountingServiceImpl implements VoteCountingService {
                         System.err.println(errorMessage);
                     }
             });
-
-            finish = Instant.now();
-            timeElapsed = Duration.between(start, finish).toMillis();
-            System.err.println("forEachOrdered voter Execution took "+ timeElapsed + " millis");
-
-            start = Instant.now();
+            // Updating result per constituency
             constituencyToCandidateMap.entrySet().stream().forEach(e -> {
                 ConstituencyResult values = e.getValue();
                 values.updateResult();
             });
-
-            finish = Instant.now();
-            timeElapsed = Duration.between(start, finish).toMillis();
-            System.err.println("constituencyToCandidateMap final update Execution took "+ timeElapsed + " millis");
         }
 
         return constituencyToCandidateMap;
     }
 
+    // Method to check for valid vote
     private boolean isValidVote(String voter, Map<String, CastedVote> castedVotes, Map<String, ConstituencyResult> constituencyToCandidateMap) {
         if (castedVotes.containsKey(voter)) {
             CastedVote castedVote = castedVotes.get(voter);
@@ -79,6 +67,7 @@ public class VoteCountingServiceImpl implements VoteCountingService {
         return true;
     }
 
+    // Method to handle abused votes
     private void disqualifyAllVotesForVoter(CastedVote castedVote, Map<String, ConstituencyResult> constituencyToCandidateMap) {
         if (!castedVote.isHandled()) {
             ConstituencyResult constituencyResult = constituencyToCandidateMap.get(castedVote.getConstituency());

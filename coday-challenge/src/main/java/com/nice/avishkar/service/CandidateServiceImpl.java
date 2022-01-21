@@ -22,13 +22,9 @@ public class CandidateServiceImpl implements CandidateService {
     @Override
     public Map<String, ConstituencyResult> getConstituencyToCandidateMap(Path path) throws IOException {
         Map<String, ConstituencyResult> data = new HashMap<>();
-        Instant start = Instant.now();
+        // Get candidate and constituency data
         List<String[]> allCandidate = candidatesDao.getAllCandidate(path);
-        Instant finish = Instant.now();
-        long timeElapsed = Duration.between(start, finish).toMillis();
-        System.err.println("getAllCandidate Execution took "+ timeElapsed + " millis");
-
-        start = Instant.now();
+        // Processing data to form a map
         if (null != allCandidate) {
             allCandidate.parallelStream().forEachOrdered(p -> {
                 if (data.containsKey(p[0])) {
@@ -52,9 +48,6 @@ public class CandidateServiceImpl implements CandidateService {
             System.out.println("No Constituency to candidate data");
         }
 
-        finish = Instant.now();
-        timeElapsed = Duration.between(start, finish).toMillis();
-        System.err.println("forEachOrdered Execution took "+ timeElapsed + " millis");
         return data;
     }
 }

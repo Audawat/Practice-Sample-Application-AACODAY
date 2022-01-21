@@ -27,7 +27,6 @@ public class Solution {
 
 		computeResult(candidateFile, votingFile, resultData, candidateService, voteCountingService);
 
-		System.out.println(resultData);
 		return resultData;
     }
 
