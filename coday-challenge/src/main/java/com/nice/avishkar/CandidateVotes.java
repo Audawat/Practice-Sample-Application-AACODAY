@@ -2,11 +2,11 @@ package com.nice.avishkar;
 
 import java.util.Objects;
 
-public class CandidateVotes {
+public class CandidateVotes{
 
 	private String  candidateName;
 	private long votes;
-	
+
 	public CandidateVotes() {
 		super();
 	}
@@ -32,6 +32,10 @@ public class CandidateVotes {
 	public void setVotes(long votes) {
 		this.votes = votes;
 	}
+
+	public void updateVote(int count){
+	    this.votes+=count;
+    }
 
 	@Override
 	public int hashCode() {
@@ -60,8 +64,4 @@ public class CandidateVotes {
 		builder.append("]");
 		return builder.toString();
 	}
-
-
-	
-	
 }
